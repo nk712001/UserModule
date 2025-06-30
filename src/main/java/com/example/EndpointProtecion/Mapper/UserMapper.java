@@ -21,6 +21,7 @@ public class UserMapper {
             return null;
         }
         return UserEntity.builder().
+                siNo(newUser.getSiNo()).
                 userName(newUser.getUserName()).
                 password(encoder.hashedPassword(newUser.getPassword())).
                 userSalary(newUser.getUserSalary()).
@@ -36,7 +37,9 @@ public class UserMapper {
         if (user == null) {
             return null;
         }
+
         return UserDTO.builder().
+                siNo(user.getSiNo()).
                 userName(user.getUserName()).
                 userSalary(user.getUserSalary()).
                 userDept(user.getUserDept()).

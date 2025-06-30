@@ -1,10 +1,8 @@
 package com.example.EndpointProtecion.DTO;
 
-import jakarta.persistence.Entity;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
 
 @Component
 @Getter
@@ -13,7 +11,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDTO {
-    private UUID id;
+    //    private UUID id;
+    private Integer siNo;
     private String userName;
     private String userRole;
     private Integer userSalary;
@@ -25,6 +24,6 @@ public class UserDTO {
 
     @Override
     public String toString() {
-        return "id:- " + id + "userName:- " + userName + " userEmail:- " + userEmail + " userIsActive:- " + userIsActive + " userRole:- " + userRole + " userSalary:- " + userSalary + " userJob:- " + userJob + " userDept:- " + userDept;
+        return "userName:- " + userName + "sino:- " + siNo + " userEmail:- " + userEmail + " userIsActive:- " + userIsActive + " userRole:- " + userRole + " userSalary:- " + userSalary + " userJob:- " + userJob + " userDept:- " + userDept;
     }
 }
