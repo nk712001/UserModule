@@ -30,9 +30,10 @@ public class UserController {
     }
 
     @PostMapping("/createUser")
-    public ResponseEntity<UserDTO> createUser(@RequestBody CreateUser userObj) throws Exception {
+    public ResponseEntity<UserDTO> createUser(@RequestBody CreateUser userObj) {
         UserDTO user = service.createUser(userObj);
         mapper.createToEntity(userObj);
         return ResponseEntity.ok(user);
     }
+
 }
