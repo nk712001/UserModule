@@ -1,8 +1,10 @@
 package com.example.EndpointProtecion.Service;
 
 import com.example.EndpointProtecion.DTO.CreateUser;
+import com.example.EndpointProtecion.DTO.SingleUserDTO;
 import com.example.EndpointProtecion.DTO.UserDTO;
 import com.example.EndpointProtecion.Entity.UserEntity;
+import com.example.EndpointProtecion.Exception.NoUserFoundForGivenIdException;
 import com.example.EndpointProtecion.Exception.UserAlredyExistsException;
 import com.example.EndpointProtecion.Mapper.UserMapper;
 import com.example.EndpointProtecion.Repository.UserRepository;
@@ -18,18 +20,19 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class UserServiceImplementation implements UserService, UserDetailsService {
     private static final Logger log = LoggerFactory.getLogger(UserServiceImplementation.class);
-    @Autowired
-    public UserRepository userRepo;
+    private final UserRepository userRepo;
+    private final UserMapper mapper;
 
     @Autowired
-    public UserMapper mapper;
+    public UserServiceImplementation(UserRepository userRepo, UserMapper mapper) {
+        this.userRepo = userRepo;
+        this.mapper = mapper;
+    }
 
     @Override
     public List<UserDTO> getAllUsers() {
@@ -42,7 +45,7 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 
     @Transactional
     @Override
-    public UserDTO createUser(CreateUser newUser) throws UserAlredyExistsException {
+    public SingleUserDTO createUser(CreateUser newUser) throws UserAlredyExistsException {
         UserEntity user = mapper.createToEntity(newUser);
         boolean UserFound = userRepo.existsByUserNameAndUserEmail(user.getUserName(), user.getUserEmail()) || userRepo.existsByUserEmail(user.getUserEmail());
         if (UserFound) {
@@ -52,7 +55,13 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
             userRepo.save(user);
             log.info("user details saved to db!!!");
         }
-        return mapper.userToDTO(user);
+        return mapper.userToSingleDTO(user);
+    }
+
+    @Override
+    public SingleUserDTO findUserById(UUID id) {
+        UserEntity userOpt = userRepo.findById(id).orElseThrow(() -> new NoUserFoundForGivenIdException("No user found for the given ID"));
+        return mapper.userToSingleDTO(userOpt);
     }
 
     @Override
@@ -63,6 +72,7 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         }
         return new User(user.getUserName(), user.getPassword(), getAuthorities(user));
     }
+
 
     private Collection<? extends GrantedAuthority> getAuthorities(UserEntity user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
