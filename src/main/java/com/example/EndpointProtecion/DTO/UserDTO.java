@@ -1,5 +1,6 @@
 package com.example.EndpointProtecion.DTO;
 
+import jakarta.persistence.Entity;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
