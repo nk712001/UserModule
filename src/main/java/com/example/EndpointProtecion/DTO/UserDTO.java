@@ -24,6 +24,6 @@ public class UserDTO {
 
     @Override
     public String toString() {
-        return userName + "userName:- " + " userEmail:- " + userEmail + " userIsActive:- " + userIsActive + " userRole:- " + userRole + " userSalary:- " + userSalary + " userJob:- " + userJob + " userDept:- " + userDept;
+        return "userName:- " +userName +  " userEmail:- " + userEmail + " userIsActive:- " + userIsActive + " userRole:- " + userRole + " userSalary:- " + userSalary + " userJob:- " + userJob + " userDept:- " + userDept;
     }
 }

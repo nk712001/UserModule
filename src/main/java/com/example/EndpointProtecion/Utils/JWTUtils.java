@@ -1,11 +1,13 @@
 package com.example.EndpointProtecion.Utils;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +18,7 @@ import static io.jsonwebtoken.io.Decoders.BASE64;
 
 @Component
 public class JWTUtils {
+    private static final Logger log = LoggerFactory.getLogger(JWTUtils.class);
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -38,12 +41,15 @@ public class JWTUtils {
 
     public boolean validateToken(String token, UserDetails userDetails) {
         try {
-            Jwts.parserBuilder()
+            Claims claims = Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
                     .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (IllegalArgumentException e) {
+                    .parseClaimsJws(token).getBody();
+            String userNameFromToken = claims.getSubject();
+            boolean isTokenExpired = claims.getExpiration().before(new Date());
+            log.info("userNameFromToken:- {} and userdetails name :- {}", userNameFromToken, userDetails.getUsername());
+            return (userNameFromToken.equals(userDetails.getUsername()) && !isTokenExpired);
+        } catch (JwtException | IllegalArgumentException e) {
             e.printStackTrace();
             return false;
         }
