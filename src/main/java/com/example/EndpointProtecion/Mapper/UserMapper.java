@@ -8,6 +8,8 @@ import com.example.EndpointProtecion.Utils.PasswordEncoding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 public class UserMapper {
     public final String defaultRole = "user";
@@ -65,18 +67,18 @@ public class UserMapper {
     }
 
     //    create user to single user DTO
-    public SingleUserDTO createToSingleUserDTO(CreateUser newUser) {
+    public void createToSingleUserDTO(CreateUser newUser) {
         if (newUser == null) {
-            return null;
+            return;
         }
-        return SingleUserDTO.builder().
+        SingleUserDTO.builder().
                 id(newUser.getId()).
                 userName(newUser.getUserName()).
                 userSalary(newUser.getUserSalary()).
                 userDept(newUser.getUserDept()).
                 userJob(newUser.getUserJob()).
                 userEmail(newUser.getUserEmail()).
-                userRole(newUser.getUserRole() != null ? newUser.getUserRole() : defaultRole).
+                userRole(Objects.equals(newUser.getUserRole(), "") || newUser.getUserRole() == null ? defaultRole : newUser.getUserRole()).
                 userIsActive(defaultIsActive).build();
     }
 }
